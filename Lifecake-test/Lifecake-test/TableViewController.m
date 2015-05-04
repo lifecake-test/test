@@ -7,110 +7,109 @@
 //
 
 #import "TableViewController.h"
+#import "TableViewCell.h"
+#import "GlossImageViewController.h"
+
+#import <SDWebImage/SDWebImageManager.h>
+
+#define COUNT 10000
+
+static NSString *kCellIdentifier = @"kCellIdentifier";
 
 @interface TableViewController ()
+
+@property (nonatomic, strong) NSArray *randomStrings;
+@property (nonatomic, strong) NSArray *imageURLs;
 
 @end
 
 @implementation TableViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+- (id)init {
+  self = [super init];
+  if (self) {
+    self.imageURLs = @[@"http://www.hdwallpapersimages.com/wp-content/uploads/2014/01/Winter-Tiger-Wild-Cat-Images.jpg",
+                       @"http://hdwallpapersfit.com/wp-content/uploads/2015/03/images-7.jpg",
+                       @"http://images.panda.org/assets/images/pages/welcome/orangutan_1600x1000_279157.jpg",
+                       @"http://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/12/multicoloured_view_of_supernova_remnant/15172784-1-eng-GB/Multicoloured_view_of_supernova_remnant_node_full_image_2.jpg"];
+  }
+  
+  return self;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+#pragma mark - UIViewController
+
+- (void)viewDidLoad {
+  [super viewDidLoad];
+  
+  [self loadRandomStrings];
+  
+  // prevent from keeping images in memory (no reason to keep them in this task)
+  [SDWebImageManager sharedManager].imageCache.maxMemoryCost = 0;
+  
+  [self.tableView registerNib:[UINib nibWithNibName:@"TableViewCell" bundle:nil] forCellReuseIdentifier:kCellIdentifier];
+  [self.tableView reloadData];
 }
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Potentially incomplete method implementation.
-    // Return the number of sections.
-    return 0;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-    return 0;
+  // Return the number of rows in the section.
+  return self.randomStrings.count;
 }
 
-/*
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
-    // Configure the cell...
-    
-    return cell;
+  TableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kCellIdentifier forIndexPath:indexPath];
+  
+  NSURL *url = [NSURL URLWithString:[self.imageURLs objectAtIndex:indexPath.row % self.imageURLs.count]];
+  NSString *randomString = [self.randomStrings objectAtIndex:indexPath.row];
+  
+  [cell configureForURL:url randomString:randomString];
+  
+  return cell;
 }
-*/
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
 #pragma mark - Table view delegate
 
-// In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here, for example:
-    // Create the next view controller.
-    <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:<#@"Nib name"#> bundle:nil];
-    
-    // Pass the selected object to the new view controller.
-    
-    // Push the view controller.
-    [self.navigationController pushViewController:detailViewController animated:YES];
+  NSURL *url = [NSURL URLWithString:[self.imageURLs objectAtIndex:indexPath.row % self.imageURLs.count]];
+  
+  GlossImageViewController *glossController = [[GlossImageViewController alloc] initWithImageURL:url];
+  [self.navigationController presentViewController:[[UINavigationController alloc] initWithRootViewController:glossController] animated:YES completion:nil];
+  
+  [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
-*/
 
-/*
-#pragma mark - Navigation
+#pragma mark -
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (NSString *)generateRandomString {
+  return [NSString stringWithFormat:@"%li", (long)arc4random_uniform(100000)];
 }
-*/
+
+- (void)loadRandomStrings {
+  // generate random strings
+  // each string should be used only once
+  
+  CFTimeInterval startTime = CACurrentMediaTime();
+  
+  NSMutableArray *labels = [NSMutableArray array];
+  NSString *rs = [self generateRandomString];
+  
+  for (int i = 0; i < COUNT; i++) {
+    // generate random string
+    [self generateRandomString];
+    
+    while ([labels containsObject:rs]) {
+      rs = [self generateRandomString];
+    }
+    
+    [labels addObject:rs];
+  }
+  
+  self.randomStrings = labels;
+  
+  CFTimeInterval elapsedTime = CACurrentMediaTime() - startTime;
+  NSLog(@"loading time: %f", elapsedTime);
+}
 
 @end
