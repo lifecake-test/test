@@ -32,5 +32,5 @@ Is Core Data fast enough for such amount of records? What are possible solutions
 Task 3. Collection View.
 Replace UITableView with UICollectionView. View should display one cell in a row. Cell should contain image and number. Tapping cell should open image.
 
-Task 4. Swift
+Task 4. Swift.
 Convert project (fixed one) from objective-c to swift. Probably it will be easier to setup it as new project and commit to new repo / branch. 
