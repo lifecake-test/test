@@ -4,9 +4,13 @@ Clone project. Create separate brunch, where all fixes will be committed. Make s
 - you should be able to explain any code changes
 - using Xcode instruments highly recommended
 
-Feel free to ask me if you have any questions, something is unclear or you are stuck on some task.
+Feel free to ask if you have any questions, something is unclear or you are stuck on some task.
+
 Skype: artjom.popov
 Email: artjom@lifecake.com
+
+Skype: thelegothief
+Email: marks@lifecake.com
 
 Links:
 Cocoapod: https://cocoapods.org/
@@ -26,4 +30,7 @@ Task 2. Core Data
 Is Core Data fast enough for such amount of records? What are possible solutions?
 
 Task 3. Collection View.
-Rewrite app using UICollectionView instead UITableView. View should display one cell in a row. Cell should contain image and number. Tapping cell should open image.
+Replace UITableView with UICollectionView. View should display one cell in a row. Cell should contain image and number. Tapping cell should open image.
+
+Task 4. Swift
+Convert project (fixed one) from objective-c to swift. Probably it will be easier to setup it as new project and commit to new repo / branch. 
